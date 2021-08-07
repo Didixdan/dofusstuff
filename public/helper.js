@@ -1,4 +1,4 @@
-window.addEventListener('message', (event) => {
+window.addEventListener("message", (event) => {
   console.log(event);
 });
 //debugger;
