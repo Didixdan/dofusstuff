@@ -3,33 +3,35 @@
   <head>
     <title>Config Page</title>
     <link rel="stylesheet" href="tailwind-2.2.7.min.css" />
+    <link rel="stylesheet" href="config.css" />
   </head>
   <body style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif">
-    <div id="app"></div>
-    <script src="https://extension-files.twitch.tv/helper/v1/twitch-ext.min.js"></script>
-    <!-- If you use any external libraries, such as jQuery, you must include
-      them as part of your extension.  Twitch does not allow extensions to link
-      to external libraries. -->
-    <script src="jquery-3.3.1.min.js" type="text/javascript"></script>
-    <script src="config.js" type="text/javascript"></script>
-    <div class="w-2/3">
-      <h2 class="text-3xl">Configure This</h2>
-      <p>Just kidding... hello world.</p>
-      <div id="choice_selection">
-        Choix de séléction des items
-        <input type="radio" name="mode" id="dpp" value="Dofus Page persos" checked />
-        <label for="dpp">Dofus Page persos</label>
+    <div id="app" class="w-2/3">
+      <h2 class="text-3xl mb-4">Paramétrage</h2>
 
-        <input type="radio" name="mode" id="dr" value="Dofus Room" />
+      <p class="text-lg">Choix de séléction des items</p>
+      <div>
+        <input type="radio" name="mode" id="dpp" value="dpp" checked />
+        <label for="dpp">Dofus Page persos</label>
+      </div>
+      <div>
+        <input type="radio" name="mode" id="dr" value="dr" />
         <label for="dr">Dofus Room</label>
       </div>
 
-      <div id="link" class="mt-4">
+      <div class="mt-4">
         <span id="title_link">Lien de la page perso</span>
-        <input type="text" name="link" class="border-2 rounded-md w-full" />
+        <input type="text" id="link" class="border-2 rounded-md w-full" />
       </div>
 
-      <button id="save">Sauvegarder</button>
+      <button id="save" class="border-2 bg-purple-600 text-white p-2 rounded-md border-purple-600 mt-2 hover:bg-purple-700 transition">
+        Sauvegarder
+      </button>
+      <div id="message" class="opacity-0 transition">Sauvegarde effectuée</div>
     </div>
+
+    <script src="https://extension-files.twitch.tv/helper/v1/twitch-ext.min.js"></script>
+    <script src="jquery-3.3.1.min.js" type="text/javascript"></script>
+    <script src="config.js" type="text/javascript"></script>
   </body>
 </html>
