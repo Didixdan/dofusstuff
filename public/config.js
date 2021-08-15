@@ -31,10 +31,7 @@ twitch.configuration.onChanged(() => {
     // Parsing the array saved in broadcaster content
     config = JSON.parse(twitch.configuration.broadcaster.content);
 
-    console.log("test2");
     // Updating the value of the options array to be the content from config
-
-    console.log(config);
     if (config.mode) {
       $("[name=mode][value=" + config.mode + "]").prop("checked", true);
     }
@@ -43,8 +40,6 @@ twitch.configuration.onChanged(() => {
     if (config.link) {
       $("#link").val(config.link);
     }
-
-    console.log("test3");
   } else {
     console.log("Invalid config");
   }
