@@ -21,8 +21,9 @@ const Boom = require("boom");
 // const color = require("color");
 const ext = require("commander");
 const jsonwebtoken = require("jsonwebtoken");
-const puppeteer = require("puppeteer");
-const cloudscraper = require("cloudscraper");
+const puppeteer = require("puppeteer-extra");
+const StealthPlugin = require("puppeteer-extra-plugin-stealth");
+puppeteer.use(StealthPlugin());
 
 // The developer rig uses self-signed certificates.  Node doesn't accept them
 // by default.  Do not use this in production.
@@ -209,29 +210,31 @@ function stuffQueryHandler(req) {
     }
 
     return new Promise((resolve, rejection) => {
-      try {
-        if (config.mode == "dr") {
-          (async () => {
-            const browser = await puppeteer.launch();
-            const page = await browser.newPage();
-            await page.goto(url);
-            await new Promise((r) => setTimeout(r, 1000));
-            htmlResponse = await page.content();
-            await browser.close();
-            resolve(htmlResponse);
-          })();
-        } else if (config.mode == "dpp") {
-          var options = {
-            method: "GET",
-            url: url,
-          };
-          cloudscraper(options).then(function (htmlString) {
-            resolve(htmlString);
-          });
+      // if (config.mode == "dr") {
+      (async () => {
+        try {
+          const browser = await puppeteer.launch({ headless: true });
+          const page = await browser.newPage();
+          await page.goto(url);
+          await page.waitForTimeout(5000);
+          htmlResponse = await page.content();
+          // await page.screenshot({ path: "testresult.png", fullPage: true });
+          await browser.close();
+          resolve(htmlResponse);
+        } catch (error) {
+          rejection(error);
         }
-      } catch (err) {
-        rejection(err);
-      }
+      })();
+      // } else if (config.mode == "dpp") {
+      // (async () => {
+      //   try {
+      //     const response = await cloudflareScraper.get(url);
+      //     resolve(response);
+      //   } catch (error) {
+      //     rejection(error);
+      //   }
+      // })();
+      // }
     });
   }
 }

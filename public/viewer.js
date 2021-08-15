@@ -86,7 +86,13 @@ function modifImgSrc(html) {
   for (var i = 0; i < imgSrcUrls.length; i++) {
     var urlValue = imgSrcUrls[i].getAttribute("src");
     if (urlValue) {
-      imgSrcUrls[i].setAttribute("src", "https://www.dofusroom.com/" + urlValue);
+      if (config.mode === "dr") {
+        imgSrcUrls[i].setAttribute("src", "https://www.dofusroom.com/" + urlValue);
+      } else if (config.mode === "dpp") {
+        if (urlValue.match("items.*")) {
+          imgSrcUrls[i].setAttribute("src", "https://www.dofusroom.com/img/assets/items/" + urlValue.match("[0-9]+.png"));
+        }
+      }
     }
   }
   return element.innerHTML;
