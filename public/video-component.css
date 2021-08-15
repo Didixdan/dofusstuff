@@ -1,0 +1,47 @@
+#app {
+  overflow: auto;
+  /*background-color: rgba(15, 14, 17, 0.7);*/
+  padding: 1.25em;
+  padding-top: 0.5em;
+}
+
+#link {
+  text-align: center;
+  padding: 0.6em;
+  color: #ccae62;
+  border: solid #ccae62;
+  border-width: 0px 0 1px 0;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 0.75em;
+}
+
+#link:hover {
+  color: #ffda79;
+  border-color: #ffda79;
+}
+
+.item {
+  width: 60px;
+  height: 60px;
+  border: 1px solid #2f3640;
+  border-radius: 5px;
+  margin: 0.25em;
+  cursor: pointer;
+  background-color: #2f3640;
+  transition: all 0.2s;
+}
+
+.item:hover {
+  border: 1px solid #38ada9;
+  background-color: #38ada9;
+}
+
+.item img {
+  margin: auto;
+}
+
+#character img {
+  width: 215px;
+  margin: auto;
+}
