@@ -1,0 +1,105 @@
+{
+  "allowHttpBackend": false,
+  "backendCommand": "node backend.js -c 31l33m3oc19t4ie86uhl8w1a37whc3 -o 31l33m3oc19t4ie86uhl8w1a37whc3 -s cREJEc/oXZJcyMUHgPTwDXsSwdrk7iPr4/heSFE85Fg=",
+  "backendFolderName": "services",
+  "certificateExceptions": [
+    {
+      "isAllowed": true,
+      "isEphemeral": false,
+      "isOrigin": true,
+      "value": "https://localhost:8081"
+    }
+  ],
+  "extensionViews": [
+    {
+      "channelId": "35829707",
+      "configurationAnchor": "component",
+      "displayChannelName": "didixdan",
+      "features": {
+        "isBitsEnabled": false,
+        "isChatEnabled": false,
+        "isSubscriptionStatusAvailable": false
+      },
+      "frameSize": {
+        "width": 1280,
+        "height": 720
+      },
+      "id": "3",
+      "isPopout": false,
+      "label": "",
+      "linked": false,
+      "linkedUserId": "",
+      "orientation": "Portrait",
+      "type": "component",
+      "viewerType": "Broadcaster"
+    }
+  ],
+  "manifest": {
+    "anchor": "component",
+    "assetUrls": [],
+    "authorName": "Didix.",
+    "bitsEnabled": false,
+    "canInstall": true,
+    "configUrl": "https://localhost:8080/config.html",
+    "configurationLocation": "hosted",
+    "description": "",
+    "eulaTosUrl": "",
+    "hasChatSupport": false,
+    "iconUrl": "https://extensions-discovery-images.twitch.tv/31l33m3oc19t4ie86uhl8w1a37whc3/0.0.1/logo043274f8-1841-4759-b4c0-f49b4023945c",
+    "iconUrls": {
+      "100x100": "https://extensions-discovery-images.twitch.tv/31l33m3oc19t4ie86uhl8w1a37whc3/0.0.1/logo043274f8-1841-4759-b4c0-f49b4023945c"
+    },
+    "id": "31l33m3oc19t4ie86uhl8w1a37whc3",
+    "installationCount": -42,
+    "liveConfigUrl": "",
+    "name": "DofusStuff",
+    "panelHeight": 0,
+    "privacyPolicyUrl": "",
+    "requestIdentityLink": false,
+    "requiredBroadcasterAbilities": [],
+    "screenshotUrls": [],
+    "sku": "",
+    "state": "Testing",
+    "subscriptionsSupportLevel": "none",
+    "summary": "Permet de voir le stuff en cours d'un joueur faisant un stream sur dofus ! :)",
+    "supportEmail": "didixdan@hotmail.com",
+    "vendorCode": "",
+    "version": "0.0.1",
+    "viewerSummary": "",
+    "viewerUrl": "",
+    "viewerUrls": {
+      "mobile": "https://localhost:8080/mobile.html",
+      "component": "https://localhost:8080/video_component.html"
+    },
+    "views": {
+      "mobile": {
+        "viewerUrl": "https://localhost:8080/mobile.html"
+      },
+      "component": {
+        "viewerUrl": "https://localhost:8080/video_component.html",
+        "aspectWidth": 0,
+        "aspectHeight": 0,
+        "aspectRatioX": 41000,
+        "aspectRatioY": 43000,
+        "scalePixels": 480,
+        "targetHeight": 9000,
+        "size": 0,
+        "zoom": false,
+        "zoomPixels": 0,
+        "canLinkExternalContent": false,
+        "autoScale": true
+      },
+      "config": {
+        "viewerUrl": "https://localhost:8080/config.html",
+        "canLinkExternalContent": false
+      }
+    },
+    "whitelistedConfigUrls": [],
+    "whitelistedPanelUrls": []
+  },
+  "frontendCommand": "",
+  "frontendFolderName": "public",
+  "name": "DofusStuff",
+  "usingRandomFrontendHostingPort": false,
+  "version": 3
+}
