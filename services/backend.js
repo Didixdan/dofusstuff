@@ -25,6 +25,16 @@ const puppeteer = require("puppeteer-extra");
 const StealthPlugin = require("puppeteer-extra-plugin-stealth");
 puppeteer.use(StealthPlugin());
 
+const request = require("request");
+
+var jsdom = require("jsdom");
+const { JSDOM } = jsdom;
+const { window } = new JSDOM();
+const { document } = new JSDOM("").window;
+global.document = document;
+
+var $ = (jQuery = require("jquery")(window));
+
 // The developer rig uses self-signed certificates.  Node doesn't accept them
 // by default.  Do not use this in production.
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
@@ -44,6 +54,10 @@ const bearerPrefix = "Bearer "; // HTTP authorization headers have this prefix
 let htmlResponse = "";
 const channelCooldowns = {}; // rate limit compliance
 // let userCooldowns = {}; // spam prevention
+let itemsDofusRoom = {};
+
+const baseUrlItemImage = "https://www.dofusroom.com/img/assets/items/";
+const baseUrlCharImage = "https://www.dofusroom.com/img/buildroom/assets/char/";
 
 const STRINGS = {
   // secretEnv: usingValue("secret"),
@@ -105,7 +119,22 @@ const server = new Hapi.Server(serverOptions);
   server.route({
     method: "GET",
     path: "/stuff",
-    handler: stuffQueryHandler,
+    handler: formatstuffQuery,
+  });
+
+  // Load items from Dofus Roomvar myInit = { method: 'GET',
+  const options = {
+    url: "https://www.dofusroom.com/api/item/findAll",
+    headers: {
+      ApiKey: "20d0d6435863c8c01b8f079ee313030f455a8e48",
+      Organization: "didix",
+    },
+  };
+  request.post(options, function (error, response, body) {
+    if (!error && response.statusCode == 200) {
+      itemsDofusRoom = JSON.parse(body).data;
+      console.log("Items chargés");
+    }
   });
 
   // Start the server.
@@ -188,6 +217,98 @@ function verifyAndDecode(header) {
 //     setTimeout(resolve, time);
 //   });
 // }
+// function getImg(html, classe, i = 0) {
+//   return html.find(classe)[i];
+// }
+
+function getItemFromId(id) {
+  return itemsDofusRoom.filter((obj) => obj["iconId"] == id)[0];
+}
+
+function getItemIdFromHTML(html, classe, i = 0) {
+  return html.find(classe)[i].src.match("[0-9]+")[0];
+}
+
+// function modifImgSrc(html) {
+//   var element = document.createElement("div");
+//   element.innerHTML = html;
+//   var imgSrcUrls = element.getElementsByTagName("img");
+//   // debugger;
+//   for (var i = 0; i < imgSrcUrls.length; i++) {
+//     var urlValue = imgSrcUrls[i].getAttribute("src");
+//     if (urlValue) {
+//       if (config.mode === "dr") {
+//         imgSrcUrls[i].setAttribute("src", "https://www.dofusroom.com/" + urlValue);
+//       } else if (config.mode === "dpp") {
+//         if (urlValue.match("items.*")) {
+//           imgSrcUrls[i].setAttribute("src", "https://www.dofusroom.com/img/assets/items/" + urlValue.match("[0-9]+.png"));
+//         }
+//       }
+//     }
+//   }
+//   return element.innerHTML;
+// }
+
+// function newImg(selector, image) {
+//   let img = document.createElement("img");
+//   img.setAttribute("src", image.getAttribute("src"));
+//   if (image.hasAttribute("data-original-title")) {
+//     let htmlTitle = document.createElement("div");
+//     htmlTitle.innerHTML = image.getAttribute("data-original-title");
+//     debugger;
+//     let newHtmlTitle = $(htmlTitle).find("h6")[0];
+//     newHtmlTitle = newHtmlTitle + $(htmlTitle).getElementsByTagName("div")[0];
+//     img.setAttribute("data-original-title", newHtmlTitle.innerHTML);
+//   }
+//   $(selector).html(img);
+// }
+
+function createItemJson(html, classe) {
+  let item = getItemFromId(getItemIdFromHTML(html, classe));
+  return {
+    name: item.name,
+    image: baseUrlItemImage + item.iconId + ".png",
+    level: item.level,
+  };
+}
+
+async function formatstuffQuery(req) {
+  const response = await stuffQueryHandler(req);
+
+  // const html = modifImgSrc(response);
+  const documentHTML = $($.parseHTML(response));
+
+  let objReturn = {};
+  let arrayItems = [];
+
+  objReturn.link = documentHTML.find("h4[data-build-name='']").html();
+
+  arrayItems.push(createItemJson(documentHTML, ".item-box-amulet img"));
+  arrayItems.push(createItemJson(documentHTML, ".item-box-ring[data-position='bottom'] img"));
+  arrayItems.push(createItemJson(documentHTML, ".item-box-ring[data-position='top'] img"));
+
+  arrayItems.push(createItemJson(documentHTML, ".item-box-hat img"));
+  arrayItems.push(createItemJson(documentHTML, ".item-box-cape img"));
+  arrayItems.push(createItemJson(documentHTML, ".item-box-belt img"));
+  arrayItems.push(createItemJson(documentHTML, ".item-box-boots img"));
+
+  arrayItems.push(createItemJson(documentHTML, ".item-box-weapon img"));
+  arrayItems.push(createItemJson(documentHTML, ".item-box-shield img"));
+
+  arrayItems.push(createItemJson(documentHTML, ".item-box-creature img"));
+
+  arrayItems.push(createItemJson(documentHTML, ".item-box-trophus[data-position='1'] img"));
+  arrayItems.push(createItemJson(documentHTML, ".item-box-trophus[data-position='2'] img"));
+  arrayItems.push(createItemJson(documentHTML, ".item-box-trophus[data-position='3'] img"));
+  arrayItems.push(createItemJson(documentHTML, ".item-box-trophus[data-position='4'] img"));
+  arrayItems.push(createItemJson(documentHTML, ".item-box-trophus[data-position='5'] img"));
+  arrayItems.push(createItemJson(documentHTML, ".item-box-trophus[data-position='6'] img"));
+
+  objReturn.items = arrayItems;
+  objReturn.character = baseUrlCharImage + documentHTML.find("#character img")[0].src.match("(char/)(.+.png)")[2];
+
+  return objReturn;
+}
 
 function stuffQueryHandler(req) {
   // Verify all requests.
@@ -216,7 +337,16 @@ function stuffQueryHandler(req) {
           const browser = await puppeteer.launch({ headless: true });
           const page = await browser.newPage();
           await page.goto(url);
-          await page.waitForTimeout(5000);
+          let wait = 0;
+          switch (config.mode) {
+            case "dr":
+              wait = 1200;
+              break;
+            case "dpp":
+              wait = 5000;
+              break;
+          }
+          await page.waitForTimeout(wait);
           htmlResponse = await page.content();
           // await page.screenshot({ path: "testresult.png", fullPage: true });
           await browser.close();

@@ -78,36 +78,6 @@ twitch.onAuthorized(function (auth) {
   //$.ajax(requests.get);
 });
 
-function modifImgSrc(html) {
-  var element = document.createElement("div");
-  element.innerHTML = html;
-  var imgSrcUrls = element.getElementsByTagName("img");
-  // debugger;
-  for (var i = 0; i < imgSrcUrls.length; i++) {
-    var urlValue = imgSrcUrls[i].getAttribute("src");
-    if (urlValue) {
-      if (config.mode === "dr") {
-        imgSrcUrls[i].setAttribute("src", "https://www.dofusroom.com/" + urlValue);
-      } else if (config.mode === "dpp") {
-        if (urlValue.match("items.*")) {
-          imgSrcUrls[i].setAttribute("src", "https://www.dofusroom.com/img/assets/items/" + urlValue.match("[0-9]+.png"));
-        }
-      }
-    }
-  }
-  return element.innerHTML;
-}
-
-function getLinkImg(html, classe, i = 0) {
-  return html.find(classe)[i].getAttribute("src");
-}
-
-function newImg(selector, url) {
-  let img = document.createElement("img");
-  img.setAttribute("src", url);
-  $(selector).html(img);
-}
-
 function updateBlock(response) {
   twitch.rig.log("Updating block color");
   html = modifImgSrc(response);
@@ -117,34 +87,34 @@ function updateBlock(response) {
   if (config.mode == "dr") {
     $("#link").html(documentHTML.find("h4[data-build-name='']").html());
 
-    newImg("#amulet", getLinkImg(documentHTML, ".item-box-amulet img"));
-    newImg("#ring[data-position='1']", getLinkImg(documentHTML, ".item-box-ring[data-position='bottom'] img"));
-    newImg("#ring[data-position='2']", getLinkImg(documentHTML, ".item-box-ring[data-position='top'] img"));
+    newImg("#amulet", getImg(documentHTML, ".item-box-amulet img"));
+    newImg("#ring[data-position='1']", getImg(documentHTML, ".item-box-ring[data-position='bottom'] img"));
+    newImg("#ring[data-position='2']", getImg(documentHTML, ".item-box-ring[data-position='top'] img"));
 
-    newImg("#character", getLinkImg(documentHTML, "#character img"));
+    newImg("#character", getImg(documentHTML, "#character img"));
 
-    newImg("#hat", getLinkImg(documentHTML, ".item-box-hat img"));
-    newImg("#cape", getLinkImg(documentHTML, ".item-box-cape img"));
-    newImg("#belt", getLinkImg(documentHTML, ".item-box-belt img"));
-    newImg("#boots", getLinkImg(documentHTML, ".item-box-boots img"));
+    newImg("#hat", getImg(documentHTML, ".item-box-hat img"));
+    newImg("#cape", getImg(documentHTML, ".item-box-cape img"));
+    newImg("#belt", getImg(documentHTML, ".item-box-belt img"));
+    newImg("#boots", getImg(documentHTML, ".item-box-boots img"));
 
-    newImg("#weapon", getLinkImg(documentHTML, ".item-box-weapon img"));
-    newImg("#shield", getLinkImg(documentHTML, ".item-box-shield img"));
+    newImg("#weapon", getImg(documentHTML, ".item-box-weapon img"));
+    newImg("#shield", getImg(documentHTML, ".item-box-shield img"));
 
-    newImg("#creature", getLinkImg(documentHTML, ".item-box-creature img"));
+    newImg("#creature", getImg(documentHTML, ".item-box-creature img"));
 
-    newImg("#trofus[data-position='1']", getLinkImg(documentHTML, ".item-box-trophus[data-position='1'] img"));
-    newImg("#trofus[data-position='2']", getLinkImg(documentHTML, ".item-box-trophus[data-position='2'] img"));
-    newImg("#trofus[data-position='3']", getLinkImg(documentHTML, ".item-box-trophus[data-position='3'] img"));
-    newImg("#trofus[data-position='4']", getLinkImg(documentHTML, ".item-box-trophus[data-position='4'] img"));
-    newImg("#trofus[data-position='5']", getLinkImg(documentHTML, ".item-box-trophus[data-position='5'] img"));
-    newImg("#trofus[data-position='6']", getLinkImg(documentHTML, ".item-box-trophus[data-position='6'] img"));
+    newImg("#trofus[data-position='1']", getImg(documentHTML, ".item-box-trophus[data-position='1'] img"));
+    newImg("#trofus[data-position='2']", getImg(documentHTML, ".item-box-trophus[data-position='2'] img"));
+    newImg("#trofus[data-position='3']", getImg(documentHTML, ".item-box-trophus[data-position='3'] img"));
+    newImg("#trofus[data-position='4']", getImg(documentHTML, ".item-box-trophus[data-position='4'] img"));
+    newImg("#trofus[data-position='5']", getImg(documentHTML, ".item-box-trophus[data-position='5'] img"));
+    newImg("#trofus[data-position='6']", getImg(documentHTML, ".item-box-trophus[data-position='6'] img"));
   } else if (config.mode == "dpp") {
     $("#link").html(documentHTML.find(".ak-directories-breed").html());
     debugger;
-    newImg("#amulet", getLinkImg(documentHTML, "#ak-dofus-character-equipment-item-amulet span img"));
-    newImg("#ring[data-position='1']", getLinkImg(documentHTML, "#ak-dofus-character-equipment-item-ring1 span img"));
-    newImg("#ring[data-position='2']", getLinkImg(documentHTML, "#ak-dofus-character-equipment-item-ring2 span img"));
+    newImg("#amulet", getImg(documentHTML, "#ak-dofus-character-equipment-item-amulet span img"));
+    newImg("#ring[data-position='1']", getImg(documentHTML, "#ak-dofus-character-equipment-item-ring1 span img"));
+    newImg("#ring[data-position='2']", getImg(documentHTML, "#ak-dofus-character-equipment-item-ring2 span img"));
 
     // Ankama et leur background image..
     var bg_img = documentHTML
@@ -154,22 +124,22 @@ function updateBlock(response) {
 
     newImg("#character", bg_img);
 
-    newImg("#hat", getLinkImg(documentHTML, "#ak-dofus-character-equipment-item-hat span img"));
-    newImg("#cape", getLinkImg(documentHTML, "#ak-dofus-character-equipment-item-cap span img"));
-    newImg("#belt", getLinkImg(documentHTML, "#ak-dofus-character-equipment-item-belt span img"));
-    newImg("#boots", getLinkImg(documentHTML, "#ak-dofus-character-equipment-item-amulet span img"));
+    newImg("#hat", getImg(documentHTML, "#ak-dofus-character-equipment-item-hat span img"));
+    newImg("#cape", getImg(documentHTML, "#ak-dofus-character-equipment-item-cap span img"));
+    newImg("#belt", getImg(documentHTML, "#ak-dofus-character-equipment-item-belt span img"));
+    newImg("#boots", getImg(documentHTML, "#ak-dofus-character-equipment-item-amulet span img"));
 
-    newImg("#weapon", getLinkImg(documentHTML, "#ak-dofus-character-equipment-item-weapon span img"));
-    newImg("#shield", getLinkImg(documentHTML, "#ak-dofus-character-equipment-item-shield span img"));
+    newImg("#weapon", getImg(documentHTML, "#ak-dofus-character-equipment-item-weapon span img"));
+    newImg("#shield", getImg(documentHTML, "#ak-dofus-character-equipment-item-shield span img"));
 
-    newImg("#creature", getLinkImg(documentHTML, "#ak-dofus-character-equipment-item-pet span img"));
+    newImg("#creature", getImg(documentHTML, "#ak-dofus-character-equipment-item-pet span img"));
 
-    newImg("#trofus[data-position='1']", getLinkImg(documentHTML, ".ak-equipment-dofus span img", 0));
-    newImg("#trofus[data-position='2']", getLinkImg(documentHTML, "#ak-dofus-character-equipment-item-amulet span img", 1));
-    newImg("#trofus[data-position='3']", getLinkImg(documentHTML, "#ak-dofus-character-equipment-item-amulet span img", 2));
-    newImg("#trofus[data-position='4']", getLinkImg(documentHTML, "#ak-dofus-character-equipment-item-amulet span img", 3));
-    newImg("#trofus[data-position='5']", getLinkImg(documentHTML, "#ak-dofus-character-equipment-item-amulet span img", 4));
-    newImg("#trofus[data-position='6']", getLinkImg(documentHTML, "#ak-dofus-character-equipment-item-amulet span img", 5));
+    newImg("#trofus[data-position='1']", getImg(documentHTML, ".ak-equipment-dofus span img", 0));
+    newImg("#trofus[data-position='2']", getImg(documentHTML, "#ak-dofus-character-equipment-item-amulet span img", 1));
+    newImg("#trofus[data-position='3']", getImg(documentHTML, "#ak-dofus-character-equipment-item-amulet span img", 2));
+    newImg("#trofus[data-position='4']", getImg(documentHTML, "#ak-dofus-character-equipment-item-amulet span img", 3));
+    newImg("#trofus[data-position='5']", getImg(documentHTML, "#ak-dofus-character-equipment-item-amulet span img", 4));
+    newImg("#trofus[data-position='6']", getImg(documentHTML, "#ak-dofus-character-equipment-item-amulet span img", 5));
   }
 }
 
