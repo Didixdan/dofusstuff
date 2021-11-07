@@ -65,3 +65,5 @@ typings/
 
 # IntelliJ IDE files
 .idea
+
+.vscode

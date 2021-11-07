@@ -9,18 +9,33 @@
     <div id="app" class="w-2/3">
       <h2 class="text-3xl mb-4">Paramétrage</h2>
 
+      <p class="text-lg text-center">Sélection du build</p>
+
+      <div class="build-list flex justify-center">
+        <span class="action px-2 mx-2" onclick="manageStuff('sub')">-</span>
+        <div id="builds" class="flex text-center mb-6">
+          <div class="build px-2 align-center mx-2 selected">1</div>
+        </div>
+        <span class="action px-2 mx-2" onclick="manageStuff('add')">+</span>
+      </div>
+
       <p class="text-lg">Choix de séléction des items</p>
-      <div>
+      <div class="choice">
         <input type="radio" name="mode" id="dpp" value="dpp" checked />
         <label for="dpp">Dofus Page persos</label>
       </div>
-      <div>
+      <div class="choice">
         <input type="radio" name="mode" id="dr" value="dr" />
         <label for="dr">Dofus Room</label>
       </div>
+      <div class="choice">
+        <input type="radio" name="mode" id="db" value="db" />
+        <label for="db">Dofus Book</label>
+      </div>
 
       <div class="mt-4">
-        <span id="title_link">Lien de la page perso</span>
+        <span id="title_link">Identifiant de la page perso</span>
+        <img id="exampleLink" src="#" />
         <input type="text" id="link" class="border-2 rounded-md w-full text-black" />
       </div>
 

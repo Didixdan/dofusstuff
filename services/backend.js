@@ -217,7 +217,7 @@ function verifyAndDecode(header) {
 //     setTimeout(resolve, time);
 //   });
 // }
-// function getImg(html, classe, i = 0) {
+// function response.items[0].image);
 //   return html.find(classe)[i];
 // }
 
@@ -226,7 +226,11 @@ function getItemFromId(id) {
 }
 
 function getItemIdFromHTML(html, classe, i = 0) {
-  return html.find(classe)[i].src.match("[0-9]+")[0];
+  try {
+    return html.find(classe)[i].src.match("[0-9]+")[0];
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 // function modifImgSrc(html) {
@@ -249,26 +253,17 @@ function getItemIdFromHTML(html, classe, i = 0) {
 //   return element.innerHTML;
 // }
 
-// function newImg(selector, image) {
-//   let img = document.createElement("img");
-//   img.setAttribute("src", image.getAttribute("src"));
-//   if (image.hasAttribute("data-original-title")) {
-//     let htmlTitle = document.createElement("div");
-//     htmlTitle.innerHTML = image.getAttribute("data-original-title");
-//     debugger;
-//     let newHtmlTitle = $(htmlTitle).find("h6")[0];
-//     newHtmlTitle = newHtmlTitle + $(htmlTitle).getElementsByTagName("div")[0];
-//     img.setAttribute("data-original-title", newHtmlTitle.innerHTML);
-//   }
-//   $(selector).html(img);
-// }
-
-function createItemJson(html, classe) {
+function createItemJson(html, classe, tooltipPosition) {
   let item = getItemFromId(getItemIdFromHTML(html, classe));
+  let optionName = "";
+  if (item.type === "Monture") {
+    optionName = "mount_";
+  }
   return {
     name: item.name,
-    image: baseUrlItemImage + item.iconId + ".png",
+    image: baseUrlItemImage + optionName + item.iconId + ".png",
     level: item.level,
+    tooltipPosition: tooltipPosition,
   };
 }
 
@@ -283,30 +278,41 @@ async function formatstuffQuery(req) {
 
   objReturn.link = documentHTML.find("h4[data-build-name='']").html();
 
-  arrayItems.push(createItemJson(documentHTML, ".item-box-amulet img"));
-  arrayItems.push(createItemJson(documentHTML, ".item-box-ring[data-position='bottom'] img"));
-  arrayItems.push(createItemJson(documentHTML, ".item-box-ring[data-position='top'] img"));
+  arrayItems.push(createItemJson(documentHTML, ".item-box-amulet img", "right"));
+  arrayItems.push(createItemJson(documentHTML, ".item-box-ring[data-position='bottom'] img", "right"));
+  arrayItems.push(createItemJson(documentHTML, ".item-box-ring[data-position='top'] img", "right"));
 
-  arrayItems.push(createItemJson(documentHTML, ".item-box-hat img"));
-  arrayItems.push(createItemJson(documentHTML, ".item-box-cape img"));
-  arrayItems.push(createItemJson(documentHTML, ".item-box-belt img"));
-  arrayItems.push(createItemJson(documentHTML, ".item-box-boots img"));
+  arrayItems.push(createItemJson(documentHTML, ".item-box-hat img", "left"));
+  arrayItems.push(createItemJson(documentHTML, ".item-box-cape img", "left"));
+  arrayItems.push(createItemJson(documentHTML, ".item-box-belt img", "left"));
+  arrayItems.push(createItemJson(documentHTML, ".item-box-boots img", "left"));
 
-  arrayItems.push(createItemJson(documentHTML, ".item-box-weapon img"));
-  arrayItems.push(createItemJson(documentHTML, ".item-box-shield img"));
+  arrayItems.push(createItemJson(documentHTML, ".item-box-weapon img", "top"));
+  arrayItems.push(createItemJson(documentHTML, ".item-box-shield img", "top"));
 
-  arrayItems.push(createItemJson(documentHTML, ".item-box-creature img"));
+  arrayItems.push(createItemJson(documentHTML, ".item-box-creature img", "left"));
 
-  arrayItems.push(createItemJson(documentHTML, ".item-box-trophus[data-position='1'] img"));
-  arrayItems.push(createItemJson(documentHTML, ".item-box-trophus[data-position='2'] img"));
-  arrayItems.push(createItemJson(documentHTML, ".item-box-trophus[data-position='3'] img"));
-  arrayItems.push(createItemJson(documentHTML, ".item-box-trophus[data-position='4'] img"));
-  arrayItems.push(createItemJson(documentHTML, ".item-box-trophus[data-position='5'] img"));
-  arrayItems.push(createItemJson(documentHTML, ".item-box-trophus[data-position='6'] img"));
+  arrayItems.push(createItemJson(documentHTML, ".item-box-trophus[data-position='1'] img", "top"));
+  arrayItems.push(createItemJson(documentHTML, ".item-box-trophus[data-position='2'] img", "top"));
+  arrayItems.push(createItemJson(documentHTML, ".item-box-trophus[data-position='3'] img", "top"));
+  arrayItems.push(createItemJson(documentHTML, ".item-box-trophus[data-position='4'] img", "top"));
+  arrayItems.push(createItemJson(documentHTML, ".item-box-trophus[data-position='5'] img", "top"));
+  arrayItems.push(createItemJson(documentHTML, ".item-box-trophus[data-position='6'] img", "top"));
 
   objReturn.items = arrayItems;
-  objReturn.character = baseUrlCharImage + documentHTML.find("#character img")[0].src.match("(char/)(.+.png)")[2];
 
+  let charInfos = {};
+  try {
+    charInfos = {
+      image: baseUrlCharImage + documentHTML.find("#character img")[0].src.match("(char/)(.+.png)")[2],
+      classe: documentHTML.find(".filter-option-inner-inner")[0].textContent,
+      type: "character",
+      level: documentHTML.find("#build-level")[0].value,
+    };
+  } catch (error) {
+    console.log(error);
+  }
+  objReturn.character = charInfos;
   return objReturn;
 }
 
@@ -316,17 +322,17 @@ function stuffQueryHandler(req) {
   const { channel_id: channelId, opaque_user_id: opaqueUserId } = payload;
 
   if (typeof req.query.mode !== "undefined" && typeof req.query.url !== "undefined") {
-    const config = { mode: req.query.mode, link: req.query.url };
+    const config = [{ mode: req.query.mode, link: req.query.url }];
 
     let url = "";
-    switch (config.mode) {
+    switch (config[0].mode) {
       case "dpp":
         // Dofus page persos
-        url = "https://www.dofus.com/fr/mmorpg/communaute/annuaires/pages-persos/" + config.link + "/caracteristiques";
+        url = "https://www.dofus.com/fr/mmorpg/communaute/annuaires/pages-persos/" + config[0].link + "/caracteristiques";
         break;
       case "dr":
         // Dofus Room
-        url = "https://www.dofusroom.com/buildroom/build/show/" + config.link;
+        url = "https://www.dofusroom.com/buildroom/build/show/" + config[0].link;
         break;
     }
 
@@ -338,9 +344,9 @@ function stuffQueryHandler(req) {
           const page = await browser.newPage();
           await page.goto(url);
           let wait = 0;
-          switch (config.mode) {
+          switch (config[0].mode) {
             case "dr":
-              wait = 1200;
+              wait = 1300;
               break;
             case "dpp":
               wait = 5000;

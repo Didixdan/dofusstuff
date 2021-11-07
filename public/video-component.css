@@ -45,3 +45,10 @@
   width: 215px;
   margin: auto;
 }
+
+.tooltip-theme {
+  border-radius: 5px;
+  border: 2px solid yellow;
+  background: magenta;
+  color: #fff;
+}
